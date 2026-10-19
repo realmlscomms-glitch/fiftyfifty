@@ -1,0 +1,31 @@
+name: build
+on: [push, workflow_dispatch]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+      - run: chmod +x gradlew && ./gradlew build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fiftyfifty-jar
+          path: build/libs/fiftyfifty-*.jar
+      # Save the finished mod into the repo's "download" folder so it's easy to grab.
+      - name: Commit built jar
+        run: |
+          mkdir -p download
+          rm -f download/*.jar
+          cp $(ls build/libs/fiftyfifty-*.jar | grep -v sources) download/
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add download
+          git commit -m "Add built mod jar [skip ci]" || echo "nothing to commit"
+          git push
