@@ -27,16 +27,25 @@ public class FiftyFiftyClient implements ClientModInitializer {
 	private static final KeyMapping MAKE_FAIR = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 			"key.fiftyfifty.make_fair", InputConstants.Type.KEYSYM, InputConstants.KEY_H, CATEGORY));
 
+	private static final KeyMapping OPEN_MENU = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+			"key.fiftyfifty.open_menu", InputConstants.Type.KEYSYM, InputConstants.KEY_O, CATEGORY));
+
+	/** What this player last picked, shown in the panel. */
+	static ForceMode currentMode = ForceMode.RANDOM;
+
 	@Override
 	public void onInitializeClient() {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (FORCE_WATER.consumeClick()) send(client, ForceMode.WATER);
 			while (FORCE_LAVA.consumeClick()) send(client, ForceMode.LAVA);
 			while (MAKE_FAIR.consumeClick()) send(client, ForceMode.RANDOM);
+			while (OPEN_MENU.consumeClick()) {
+				if (client.player != null) client.gui.setScreen(new FiftyFiftyScreen());
+			}
 		});
 	}
 
-	private static void send(Minecraft client, ForceMode mode) {
+	static void send(Minecraft client, ForceMode mode) {
 		if (client.player == null) return;
 
 		if (!ClientPlayNetworking.canSend(SetForceModePayload.TYPE)) {
@@ -46,5 +55,6 @@ public class FiftyFiftyClient implements ClientModInitializer {
 		}
 
 		ClientPlayNetworking.send(new SetForceModePayload(mode.ordinal()));
+		currentMode = mode;
 	}
 }

@@ -7,6 +7,7 @@ Rig your droppers. Load a dropper with a water bucket and a lava bucket, then:
 | **J** | Force droppers to pull the **water bucket** |
 | **K** | Force droppers to pull the **lava bucket** |
 | **H** | Back to a fair **50/50** coin flip |
+| **O** | Open the 50/50 panel with buttons |
 
 Change the keys in Options → Controls → Key Binds → **50/50**.
 
